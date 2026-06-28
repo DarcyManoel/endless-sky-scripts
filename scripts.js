@@ -33,6 +33,22 @@ function scriptCheaterMapEvents(){
 		.sort()
 	copyToClipboard(`${generationTextHeader}event "cheater: reveal vanilla systems"\n\tvisit ${systemNames.join(`\n\tvisit `)}\nevent "cheater: reveal shrouded systems"${shroudedSystemNames.map(system=>`\n\tsystem ${system}\n\t\tremove shrouded`).join(``)}`) // copy formatted event block that marks all vanilla systems as visited to clipboard
 }
+//	unused upload png function
+// function scriptConstellationsShip(){
+// 	return new Promise((resolve, reject) => {
+// 		//	Create a dynamic input element completely in memory
+// 		let input = document.createElement("input")
+// 		input.type = "file"
+// 		input.accept = "image/png" // Requests the OS to filter for PNGs
+// 		//	Set up the change listener to handle the selected file
+// 		input.onchange = (event) => {
+// 			let file = event.target.files[0]
+// 			resolve(file)
+// 		}
+// 		//	Trigger the native click event to open the OS file browser dialogue
+// 		input.click()
+// 	})
+// }
 let nodes=[]
 function parseLinesToTree(){
 	nodes=[]
