@@ -115,12 +115,8 @@ body{
 				order:2;
 				visibility:hidden;
 				>div{
-					align-self:start;
-					column-width:12em;
 					column-gap:.5em;
-					grid-column:1;
-					grid-row:1;
-					width:100%;
+					column-width:14em;
 					opacity:0;
 					order:2;
 					visibility:hidden;
