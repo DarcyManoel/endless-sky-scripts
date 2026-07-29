@@ -5,28 +5,42 @@
 		<title>Endless Sky Scripts</title>
 	</head>
 	<body spellcheck="false">
-		<div id="banner">
+		<div id="topbar">
 			<div onclick="importData()">Upload Data</div>
+			<div></div>
+			<div>Tables</div>
+			&#183;
+			<div onclick="selectCategory(this.innerText)">Scripts</div>
 		</div>
-		<div class="category-content details blocked" id="Cheater" open>
-			<div class="summary" onclick="this.parentElement.toggleAttribute(`open`)">CHEATER</div>
-			<div class="content">
-				<div class="script" onclick="scriptCheaterMapEvents()">
-					<div class="title">
-						Map Events
-					</div>
-					<div class="description">
-						<li><b>Event: </b>reveals all systems.</li>
-						<li><b>Event: </b>unshrouds shrouded systems.</li>
-					</div>
+		<div id="content">
+			<div id="sidebar">
+				<div id="sidebarTables">Test Tables</div>
+				<div id="sidebarScripts">
+					<div onclick="selectTab(this.innerText)">Cheater</div>
 				</div>
-				<div class="script" onclick="scriptCheaterSales()">
-					<div class="title">
-						Sales
-					</div>
-					<div class="description">
-						<li><b>Shipyard: </b>contains all base and variant ships.</li>
-						<li><b>Outfitter: </b>contains all outfits.</li>
+			</div>
+			<div id="content">
+				<div id="contentTables">Test Tables</div>
+				<div id="contentScripts">
+					<div id="tabCheater">
+						<div class="script" onclick="scriptCheaterMapEvents()">
+							<div class="title">
+								Map Events
+							</div>
+							<div class="description">
+								<li><b>Event: </b>reveals all systems.</li>
+								<li><b>Event: </b>unshrouds shrouded systems.</li>
+							</div>
+						</div>
+						<div class="script" onclick="scriptCheaterSales()">
+							<div class="title">
+								Sales
+							</div>
+							<div class="description">
+								<li><b>Shipyard: </b>contains all base and variant ships.</li>
+								<li><b>Outfitter: </b>contains all outfits.</li>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

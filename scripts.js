@@ -1,3 +1,33 @@
+//	content management
+let selectedCategory
+function selectCategory(categoryName){
+	//	cancel function if selecting the already selected category
+	if(categoryName===selectedCategory){
+		return
+	}
+	//
+	if(selectedCategory){
+		document.getElementById(`sidebar${selectedCategory}`).classList.remove(`is-selected`)
+		document.getElementById(`content${selectedCategory}`).classList.remove(`is-selected`)
+	}
+	selectedCategory=categoryName
+	document.getElementById(`sidebar${selectedCategory}`).classList.add(`is-selected`)
+	document.getElementById(`content${selectedCategory}`).classList.add(`is-selected`)
+}
+let selectedTab
+function selectTab(tabName){
+	//	cancel function if selecting the already selected tab
+	if(tabName===selectedTab){
+		return
+	}
+	//
+	if(selectedTab){
+		document.getElementById(`tab${selectedTab}`).classList.remove(`is-selected`)
+	}
+	selectedTab=tabName
+	document.getElementById(`tab${selectedTab}`).classList.add(`is-selected`)
+}
+//
 let generationTextHeader=`#\tthis text was generated using endless-sky-scripts on github\n`
 function scriptCheaterSales(){
 	let shipNames=nodes
