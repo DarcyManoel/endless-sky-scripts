@@ -5,6 +5,14 @@ function selectCategory(categoryName){
 	if(categoryName===selectedCategory){
 		return
 	}
+	//	maintain a visual for a selected category
+	for(let category of document.getElementsByClassName(`category`)){
+		if(category.innerText===categoryName){
+			category.classList.add(`is-selected`)
+			continue
+		}
+		category.classList.remove(`is-selected`)
+	}
 	//
 	if(selectedCategory){
 		document.getElementById(`sidebar${selectedCategory}`).classList.remove(`is-selected`)
@@ -19,6 +27,14 @@ function selectTab(tabName){
 	//	cancel function if selecting the already selected tab
 	if(tabName===selectedTab){
 		return
+	}
+	//	maintain a visual for a selected tab
+	for(let tab of document.getElementsByClassName(`tab`)){
+		if(tab.innerText===tabName){
+			tab.classList.add(`is-selected`)
+			continue
+		}
+		tab.classList.remove(`is-selected`)
 	}
 	//
 	if(selectedTab){

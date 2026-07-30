@@ -1,163 +1,181 @@
 ::-webkit-scrollbar{
-	display:none;
+	display: none;
 }
 *{
-	box-sizing:border-box;
-	interpolate-size:allow-keywords;
-	outline:none;
-	overscroll-behavior:none;
-	transition:.25s;
-	user-select:none;
+	box-sizing: border-box;
+	interpolate-size: allow-keywords;
+	outline: none;
+	overscroll-behavior: none;
+	transition: .25s;
+	user-select: none;
 }
 @font-face{
-	font-family:UbuntuSans;
-	src:url(fonts/UbuntuSans-Regular.ttf);
+	font-family: UbuntuSans;
+	src: url(fonts/UbuntuSans-Regular.ttf);
 }
 @font-face{
-	font-family:UbuntuSansBold;
-	src:url(fonts/UbuntuSans-SemiBold.ttf);
+	font-family: UbuntuSansBold;
+	src: url(fonts/UbuntuSans-SemiBold.ttf);
 }
 body{
-	background:#eee;
-	display:flex;
-	flex-direction:column;
-	font-family:UbuntuSans;
-	height:100%;
-	margin:0;
+	background: #eee;
+	display: flex;
+	flex-direction: column;
+	font-family: UbuntuSans;
+	height: 100%;
+	margin: 0;
 	b{
-		font-family:UbuntuSansBold;
+		font-family: UbuntuSansBold;
 	}
 	>#topbar{
-		align-items:center;
-		background:white;
-		border-bottom:1px solid #aaa;
-		color:#aaa;
-		display:flex;
-		font-family:UbuntuSansBold;
-		font-size:1.25em;
+		align-items: center;
+		background: white;
+		border-bottom: 1px solid #aaa;
+		color: #aaa;
+		display: flex;
+		font-family: UbuntuSansBold;
+		font-size: 1.25em;
 		>*{
-			margin:0 .25em;
-			padding:.5em;
+			margin: 0 .25em;
+			padding: .5em;
 		}
 		>:empty{
-			background:#aaa;
-			height:100%;
-			margin:0;
-			padding:0;
-			width:1px;
+			background: #aaa;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			width: 1px;
 		}
 		>[onclick]{
-			color:black;
-			cursor:pointer;
-			position:relative;
+			color: black;
+			cursor: pointer;
+			position: relative;
 		}
 		>[onclick]:before{
-			background:#aaa;
-			border-radius:.5em .5em 0 0;
-			bottom:0;
-			content:'';
-			height:0;
-			left:0;
-			position:absolute;
-			transition:.1s;
-			width:100%;
+			border-radius: .5em .5em 0 0;
+			bottom: 0;
+			content: '';
+			height: 3px;
+			left: 0;
+			position: absolute;
+			transition: .1s;
+			width: 100%;
 		}
 		>[onclick]:hover:before{
-			height:2px;
+			background: rgba(170, 170, 170, .33);
+		}
+		>[onclick].is-selected:before{
+			background: rgba(170, 170, 170, 1);
 		}
 	}
 	>#content{
-		display:flex;
-		flex:1;
-		min-height:0;
-		min-width:0;
+		display: flex;
+		flex: 1;
+		min-height: 0;
+		min-width: 0;
 		>#sidebar{
-			background:white;
-			border-right:1px solid #aaa;
-			display:grid;
-			font-family:UbuntuSansBold;
-			grid-template-columns:1fr;
-			grid-template-rows:1fr;
-			padding:.5em .75em;
+			background: white;
+			border-right: 1px solid #aaa;
+			display: grid;
+			font-family: UbuntuSansBold;
+			grid-template-columns: 1fr;
+			grid-template-rows: 1fr;
+			padding: .5em .75em;
 			>div{
-				cursor:pointer;
-				display:flex;
-				gap:.5em;
-				grid-column:1;
-				grid-row:1;
-				opacity:0;
-				order:2;
-				visibility:hidden;
-				flex-direction:column;
+				cursor: pointer;
+				display: flex;
+				gap: .5em;
+				grid-column: 1;
+				grid-row: 1;
+				opacity: 0;
+				order: 2;
+				visibility: hidden;
+				flex-direction: column;
+				>div{
+					margin-left: 1em;
+				}
+				>div:before{
+					opacity: 0;
+					content: '\29CB';
+					position: absolute;
+					rotate: 90deg;
+					translate: -1em;
+				}
+				>div:hover:before{
+					opacity: .33;
+				}
+				>div.is-selected:before{
+					opacity: 1;
+				}
 			}
 			>div.is-selected{
-				opacity:1;
-				order:1;
-				visibility:visible;
+				opacity: 1;
+				order: 1;
+				visibility: visible;
 			}
 		}
 		>#content{
-			display:grid;
-			flex:1;
-			grid-template-columns:1fr;
-			grid-template-rows:1fr;
-			min-height:0;
-			min-width:0;
-			padding:.5em .75em;
+			display: grid;
+			flex: 1;
+			grid-template-columns: 1fr;
+			grid-template-rows: 1fr;
+			min-height: 0;
+			min-width: 0;
+			padding: .5em .75em;
 			>div{
-				display:grid;
-				grid-column:1;
-				grid-row:1;
-				grid-template-columns:1fr;
-				grid-template-rows:1fr;
-				min-height:0;
-				opacity:0;
-				order:2;
-				visibility:hidden;
+				display: grid;
+				grid-column: 1;
+				grid-row: 1;
+				grid-template-columns: 1fr;
+				grid-template-rows: 1fr;
+				min-height: 0;
+				opacity: 0;
+				order: 2;
+				visibility: hidden;
 				>div{
-					column-gap:.5em;
-					column-width:14em;
-					opacity:0;
-					order:2;
-					visibility:hidden;
+					column-gap: .5em;
+					column-width: 14em;
+					opacity: 0;
+					order: 2;
+					visibility: hidden;
 					>.script{
-						background:#e9e9e9;
-						border-radius:1em;
-						border:1px solid #ddd;
-						break-inside:avoid;
-						cursor:pointer;
-						display:inline-block;
-						margin-bottom:.5em;
-						padding:.5em;
-						width:100%;
+						background: #e9e9e9;
+						border-radius: 1em;
+						border: 1px solid #ddd;
+						break-inside: avoid;
+						cursor: pointer;
+						display: inline-block;
+						margin-bottom: .5em;
+						padding: .5em;
+						width: 100%;
 						>.title{
-							border-bottom:1px solid lightgrey;
-							font-family:UbuntuSansBold;
-							margin-bottom:.25em;
-							text-align:center;
+							border-bottom: 1px solid lightgrey;
+							font-family: UbuntuSansBold;
+							margin-bottom: .25em;
+							text-align: center;
 						}
 						>.description{
-							font-size:.8em;
+							font-size: .8em;
 						}
 						>.description:has(li):before{
-							content:'Provides:';
-							font-family:UbuntuSansBold;
+							content: 'Provides: ';
+							font-family: UbuntuSansBold;
 						}
 					}
 					>.script:hover{
-						background:#ddd;
+						background: #ddd;
 					}
 				}
 				>div.is-selected{
-					opacity:1;
-					order:1;
-					visibility:visible;
+					opacity: 1;
+					order: 1;
+					visibility: visible;
 				}
 			}
 			>div.is-selected{
-				opacity:1;
-				order:1;
-				visibility:visible;
+				opacity: 1;
+				order: 1;
+				visibility: visible;
 			}
 		}
 	}
