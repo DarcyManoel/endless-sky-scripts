@@ -8,19 +8,23 @@
 		<div id="topbar">
 			<div onclick="importData()">Upload Data</div>
 			<div></div>
-			<div class="category">Tables</div>
+			<div class="category" onclick="selectCategory(this.innerText)">Tables</div>
 			&#183;
 			<div class="category" onclick="selectCategory(this.innerText)">Scripts</div>
 		</div>
 		<div id="content">
 			<div id="sidebar">
-				<div id="sidebarTables">Test Tables</div>
+				<div id="sidebarTables">
+					<div class="tab" onclick="selectTab(this.innerText)">Generators</div>
+				</div>
 				<div id="sidebarScripts">
 					<div class="tab" onclick="selectTab(this.innerText)">Cheater</div>
 				</div>
 			</div>
 			<div id="content">
-				<div id="contentTables">Test Tables</div>
+				<div id="contentTables">
+					<div id="tabGenerators"></div>
+				</div>
 				<div id="contentScripts">
 					<div id="tabCheater">
 						<div class="script" onclick="scriptCheaterMapEvents()">
