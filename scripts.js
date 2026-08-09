@@ -119,6 +119,12 @@ let presets = {
 		]
 	}
 }
+let substituteTooltips = [
+	[
+		`outfit space`,
+		`Tons of general-purpose space this outfit provides.`
+	]
+]
 function populateTable(preset) {
 	preset = presets[preset]
 	let outfits = nodes
@@ -128,7 +134,20 @@ function populateTable(preset) {
 		) // keep only outfits with a child line containing 'category'
 		.filter(outfit => outfit.children
 			.some(child => child.line.includes(preset.requiredAttribute))
-		) // DYNAMIC CHANGE: filter based on the dynamic tab preset parameter
+		) // filter based on the dynamic tab preset parameter
+
+	// build a dictionary mapping attribute names to their tooltip text descriptions
+	let tooltips = nodes
+		.filter(node => node.line.startsWith(`tip `))
+		.map(node => {
+			let key = node.line.slice(4).replace(/["']/g, '').trim()
+			let descNode = node.children.find(child => child.line.trim().startsWith(`description `))
+			let descValue = descNode 
+				? descNode.line.trim().slice(12).replace(/^"|"$/g, '').trim() 
+				: node.children.map(child => child.line.trim()).join(`\n`).replace(/^"|"$/g, '').trim()
+			return [key, descValue]
+		})
+	//
 
 	let priorityOrder = preset.priorityColumns || [`category`, `cost`, `outfit space`]
 	let rawAttributes = [...new Set(
@@ -144,7 +163,16 @@ function populateTable(preset) {
 		...priorityOrder.filter(key => rawAttributes.includes(key)),
 		...rawAttributes.filter(key => !priorityOrder.includes(key)).sort()
 	]
-	let headerRow = `<th></th>` + distinctAttributes.map(key => `<th>${key}</th>`).join('')
+	
+	// map header rows with tooltip description lookups matching your cell engine attributes
+	let headerRow = `<th></th>` + distinctAttributes.map(key => {
+		let tip = substituteTooltips.find(sub => sub[0] === key)?.[1] || tooltips.find(attribute => attribute[0].startsWith(key))?.[1].slice(1, -1)
+		console.log(tip,key)
+		return tip 
+			? `<th description="${tip.replace(/"/g, `&quot;`)}"><b>${key}</b></th>` 
+			: `<th><b>${key}</b></th>`
+	}).join('')
+	
 	let bodyRows = outfits.map(outfit => {
 		let outfitName = outfit.line.slice(7).replace(/["']/g, '').trim()
 		let outfitAttributes = new Map()
