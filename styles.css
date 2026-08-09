@@ -83,13 +83,13 @@ body {
 			padding: .5em .75em;
 			>div {
 				display: flex;
+				flex-direction: column;
 				gap: .5em;
 				grid-column: 1;
 				grid-row: 1;
 				opacity: 0;
 				order: 2;
 				visibility: hidden;
-				flex-direction: column;
 				>div {
 					cursor: pointer;
 					margin: 0 .25em 0 1em;
@@ -133,65 +133,6 @@ body {
 				order: 2;
 				pointer-events: none;
 				visibility: hidden;
-				div:has(table) {
-					column-width: auto;
-					column-gap: 0;
-					display: block;
-					width: 100%;
-					overflow-x: auto;
-					>table {
-						width: 100%;
-						border-collapse: collapse;
-						>thead {
-							>tr {
-								>th {
-									padding: .5em;
-									text-align: left;
-								}
-							}
-						}
-						>tbody {
-							>tr {
-								>td {
-									padding: .5em;
-								}
-								>td:first-child {
-									text-decoration: underline dotted #aaa;
-									position: relative;
-									cursor: help;
-									pointer-events: initial;
-								}
-								>td:first-child[description]:hover::after {
-									background: #222;
-									border-radius: .4em;
-									box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-									color: #fff;
-									content: attr(description);
-									font-family: UbuntuSans, sans-serif;
-									font-size: .85em;
-									font-weight: normal;
-									left: 125%;
-									padding: .6em .8em;
-									position: absolute;
-									text-decoration: none;
-									top: 50%;
-									transition: none !important;
-									translate: 0 -50%;
-									white-space: normal;
-									white-space: pre-line;
-									width: 280px;
-									z-index: 999;
-								}
-							}
-							>tr:nth-child(even) {
-								background-color: rgba(0, 0, 0, 0.1);
-							}
-							>tr:hover {
-								background-color: rgba(255, 235, 59, 0.25);
-							}
-						}
-					}
-				}
 				>div {
 					column-gap: .5em;
 					column-width: 14em;
@@ -231,6 +172,66 @@ body {
 					order: 1;
 					pointer-events: initial;
 					visibility: visible;
+				}
+			}
+			>div:has(table) {
+				column-gap: 0;
+				column-width: auto;
+				display: block;
+				overflow-x: auto;
+				pointer-events: initial;
+				width: 100%;
+				>table {
+					border-collapse: collapse;
+					width: 100%;
+					>thead {
+						>tr {
+							>th {
+								padding: .5em;
+								text-align: left;
+							}
+						}
+					}
+					>tbody {
+						>tr {
+							>td {
+								padding: .5em;
+							}
+							>td:first-child {
+								cursor: help;
+								pointer-events: initial;
+								position: relative;
+								text-decoration: underline dotted #aaa;
+							}
+							>td:first-child[description]:hover::after {
+								background: #222;
+								border-radius: .4em;
+								box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+								color: #fff;
+								content: attr(description);
+								font-family: UbuntuSans, sans-serif;
+								font-size: .85em;
+								font-weight: normal;
+								left: 125%;
+								padding: .6em .8em;
+								position: absolute;
+								text-decoration: none;
+								top: 50%;
+								transition: none !important;
+								translate: 0 -50%;
+								white-space: normal;
+								white-space: pre-line;
+								width: 280px;
+								z-index: 999;
+							}
+						}
+						>tr:nth-child(even) {
+							background-color: rgba(0, 0, 0, 0.1);
+						}
+						>tr:hover {
+							background-color: rgba(255, 235, 59, 0.25);
+						}
+					}
 				}
 			}
 			>div.is-selected {

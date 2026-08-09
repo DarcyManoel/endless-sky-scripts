@@ -1,20 +1,20 @@
 // content management
 let selectedCategory
-function selectCategory(categoryName){
+function selectCategory(categoryName) {
 	// cancel function if selecting the already selected category
-	if(categoryName === selectedCategory){
+	if(categoryName === selectedCategory) {
 		return
 	}
 	// maintain a visual for a selected category
-	for(let category of document.getElementsByClassName(`category`)){
-		if(category.innerText === categoryName){
+	for(let category of document.getElementsByClassName(`category`)) {
+		if(category.innerText === categoryName) {
 			category.classList.add(`is-selected`)
 			continue
 		}
 		category.classList.remove(`is-selected`)
 	}
 	//
-	if(selectedCategory){
+	if(selectedCategory) {
 		document.getElementById(`sidebar${selectedCategory}`).classList.remove(`is-selected`)
 		document.getElementById(`content${selectedCategory}`).classList.remove(`is-selected`)
 	}
@@ -23,21 +23,21 @@ function selectCategory(categoryName){
 	document.getElementById(`content${selectedCategory}`).classList.add(`is-selected`)
 }
 let selectedTab
-function selectTab(tabName){
+function selectTab(tabName) {
 	// cancel function if selecting the already selected tab
-	if(tabName === selectedTab){
+	if(tabName === selectedTab) {
 		return
 	}
 	// maintain a visual for a selected tab
-	for(let tab of document.getElementsByClassName(`tab`)){
-		if(tab.innerText === tabName){
+	for(let tab of document.getElementsByClassName(`tab`)) {
+		if(tab.innerText === tabName) {
 			tab.classList.add(`is-selected`)
 			continue
 		}
 		tab.classList.remove(`is-selected`)
 	}
 	//
-	if(selectedTab){
+	if(selectedTab) {
 		document.getElementById(`tab${selectedTab}`).classList.remove(`is-selected`)
 	}
 	selectedTab = tabName
@@ -45,7 +45,7 @@ function selectTab(tabName){
 }
 //
 let generationTextHeader = `#\tthis text was generated using endless-sky-scripts on github\n`
-function scriptCheaterSales(){
+function scriptCheaterSales() {
 	let shipNames = nodes
 		.filter(node => node.line.startsWith(`ship `)) // select only nodes that define ships
 		.filter(ship => {
@@ -65,7 +65,7 @@ function scriptCheaterSales(){
 		.sort()
 	copyToClipboard(`${generationTextHeader}shipyard "cheater: everything"\n\t${shipNames.join(`\n\t`)}\noutfitter "cheater: everything"\n\t${outfitNames.join(`\n\t`)}`) // copy formatted sales block to clipboard
 }
-function scriptCheaterMapEvents(){
+function scriptCheaterMapEvents() {
 	let systemNames = nodes
 		.filter(node => node.line.startsWith(`system `)) // select only nodes that define systems
 		.map(system => system.line.slice(7)) // extract system name by removing the node key
@@ -80,7 +80,7 @@ function scriptCheaterMapEvents(){
 	copyToClipboard(`${generationTextHeader}event "cheater: reveal vanilla systems"\n\tvisit ${systemNames.join(`\n\tvisit `)}\nevent "cheater: reveal shrouded systems"${shroudedSystemNames.map(system => `\n\tsystem ${system}\n\t\tremove shrouded`).join(``)}`) // copy formatted event block that marks all vanilla systems as visited to clipboard
 }
 // unused upload png function
-// function scriptConstellationsShip(){
+// function scriptConstellationsShip() {
 // 	return new Promise((resolve, reject) => {
 // 		// Create a dynamic input element completely in memory
 // 		let input = document.createElement("input")
@@ -95,16 +95,42 @@ function scriptCheaterMapEvents(){
 // 		input.click()
 // 	})
 // }
-function populateTables(){
+let presets = {
+	Generators:{
+		requiredAttribute: `energy generation`,
+		priorityColumns: [
+			`category`,
+			`cost`,
+			`outfit space`,
+			`engine capacity`,
+			`energy generation`,
+			`heat generation`
+		]
+	},
+	Shields:{
+		requiredAttribute: `shield generation`,
+		priorityColumns: [
+			`category`,
+			`cost`,
+			`outfit space`,
+			`shield generation`,
+			`shield energy multiplier`,
+			`shield heat`
+		]
+	}
+}
+function populateTable(preset) {
+	preset = presets[preset]
 	let outfits = nodes
 		.filter(node => node.line.startsWith(`outfit `)) // select only nodes that define outfits
 		.filter(outfit => outfit.children
 			.some(child => child.line.includes(`category`))
 		) // keep only outfits with a child line containing 'category'
 		.filter(outfit => outfit.children
-			.some(child => child.line.includes(`energy generation`))
-		) // keep only outfits with a child line containing 'energy generation'
-	let priorityOrder = [`category`, `series`, `cost`, `mass`, `outfit space`, `weapon capacity`, `engine capacity`, `energy capacity`, `energy generation`, `heat generation`]
+			.some(child => child.line.includes(preset.requiredAttribute))
+		) // DYNAMIC CHANGE: filter based on the dynamic tab preset parameter
+
+	let priorityOrder = preset.priorityColumns || [`category`, `cost`, `outfit space`]
 	let rawAttributes = [...new Set(
 		outfits.flatMap(outfit =>
 			outfit.children.map(child =>
@@ -112,12 +138,13 @@ function populateTables(){
 				.replace(/["']/g, '')
 			)
 		)
-	)].filter(key => key !== `description` && key !== `thumbnail`)
+	)].filter(key => key !== 'description' && key !== 'thumbnail')
+
 	let distinctAttributes = [
 		...priorityOrder.filter(key => rawAttributes.includes(key)),
 		...rawAttributes.filter(key => !priorityOrder.includes(key)).sort()
 	]
-	let headerRow = `<th></th>` + distinctAttributes.map(key => `<th><b>${key}</b></th>`).join('')
+	let headerRow = `<th></th>` + distinctAttributes.map(key => `<th>${key}</th>`).join('')
 	let bodyRows = outfits.map(outfit => {
 		let outfitName = outfit.line.slice(7).replace(/["']/g, '').trim()
 		let outfitAttributes = new Map()
@@ -154,12 +181,12 @@ function populateTables(){
 			return `<td>${value}</td>`
 		}).join('')
 		let nameCell = tooltipText
-			? `<td description="${(`${tooltipText.thumbnail}\n\n${tooltipText.description}`).replace(/"/g, `&quot;`)}"><b>${outfitName}</b></td>`
+			? `<td description="${(`${tooltipText.thumbnail || ''}\n\n${tooltipText.description || ''}`).trim().replace(/"/g, `&quot;`)}"><b>${outfitName}</b></td>`
 			: `<td><b>${outfitName}</b></td>`
 		return `<tr>${nameCell}${dataCells}</tr>`
 		//
 	}).join(``)
-	document.getElementById(`tabGenerators`).innerHTML = `
+	document.getElementById(`contentTables`).innerHTML = `
 		<table class="data-table">
 			<thead>
 				<tr>${headerRow}</tr>
@@ -170,30 +197,30 @@ function populateTables(){
 		</table>
 	`
 }
+
 let nodes = []
-function parseLinesToTree(){
+function parseLinesToTree() {
 	nodes = []
 	let stack = [{children:nodes, indent:-1}] // initialize stack with virtual root nodes for hierarchy tracking
-	for(let fileText of dataFiles){
+	for(let fileText of dataFiles) {
 		let lines = fileText
 			.replace(/#.*$/gm, ``) // remove comments since Endless Sky uses `#` for comment lines
 			.split(/\n/) // split text into lines to process sequentially
-		for(let line of lines){
+		for(let line of lines) {
 			if(!line.trim()) continue // skip empty or whitespace-only lines since they hold no data
 			let indent = line.match(/^\t*/)[0].length // count leading tabs to determine indentation depth
 			let node = {line:line.trim(), children:[]} // create a node object with line content and empty children array
-			while(stack.length && stack.at(-1).indent >= indent){
+			while(stack.length && stack.at(-1).indent >= indent) {
 				stack.pop() // remove the most recently stacked node since its indent is too deep to be the parent of the current line
 			} // ensure the stack's top node has an indent smaller than the current line so we attach the node to the correct parent
 			stack.at(-1).children.push(node) // attach current node to the most recent valid parent
 			stack.push({...node, indent}) // push current node onto stack with its indent level to track nesting
 		}
 	}
-	populateTables()
 	return nodes
 }
 let dataFiles = []
-function importData(){
+function importData() {
 	let input = document.createElement(`input`)
 	input.type = `file`
 	input.webkitdirectory = true
@@ -201,7 +228,7 @@ function importData(){
 	input.style.display = `none`
 	input.onchange = async event => {
 		dataFiles = []
-		for(let file of event.target.files){
+		for(let file of event.target.files) {
 			try{
 				if(!file.name.endsWith(`.txt`)) continue
 				dataFiles.push(await file.text())
@@ -213,11 +240,11 @@ function importData(){
 	input.click()
 	document.body.removeChild(input)
 }
-function copyToClipboard(textToCopy){
+function copyToClipboard(textToCopy) {
 	try{
 		navigator.clipboard.writeText(textToCopy)
 		alert(`Text copied to clipboard.`)
-	}catch(error){
+	}catch(error) {
 		alert('Failed to copy text: ', error)
 	}
 }
