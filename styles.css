@@ -188,38 +188,34 @@ body {
 						>tr {
 							>th {
 								cursor: pointer;
-								padding: .5em 1.5em .5em .5em;
+								padding: .5em .5em .5em 1em;
 								pointer-events: initial;
 								position: relative;
 								text-align: left;
 							}
 							>th::before {
-								color: #aaa;
 								font-size: .75em;
 								opacity: 0;
 								position: absolute;
-								right: .4em;
+								left: 0;
 								top: 50%;
 								transition: opacity .15s;
 								translate: 0 -50%;
 							}
 							>th:hover::before {
-								content: '\21D5';
-								opacity: .4;
+								content: '\25CF';
+								opacity: 1;
 							}
 							>th[data-sort="desc"]::before {
-								color: black;
 								content: '\25BC';
 								opacity: 1;
 							}
 							>th[data-sort="asc"]::before {
-								color: black;
 								content: '\25B2';
 								opacity: 1;
 							}
 							>th[description] {
 								cursor: help;
-								position: relative;
 								text-decoration: underline dotted #aaa;
 							}
 							>th[description]:hover::after {
@@ -238,7 +234,6 @@ body {
 								top: 125%;
 								transition: none !important;
 								translate: -50%;
-								white-space: normal;
 								white-space: pre-line;
 								width: 280px;
 								z-index: 999;
@@ -248,7 +243,9 @@ body {
 					>tbody {
 						>tr {
 							>td {
+								line-height: 1.5em;
 								padding: .5em;
+								white-space: nowrap;
 							}
 							>td:first-child[description] {
 								cursor: help;
