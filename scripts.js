@@ -95,6 +95,21 @@ function scriptCheaterMapEvents() {
 // 		input.click()
 // 	})
 // }
+// global tracking matrix cache for column state operations
+let currentTableData = {
+	outfits: [],
+	presetName: '',
+	sortColumn: null, // Track which index/key name is active
+	sortDirection: 0  // 0 = Default, 1 = Descending, 2 = Ascending
+}
+//
+function cycleSort(presetName, key, currentDirection) {
+	let nextDirection = 'default'
+	if (currentDirection === 'default') nextDirection = 'desc'
+	else if (currentDirection === 'desc') nextDirection = 'asc'
+	
+	populateTable(presetName, { key: key, direction: nextDirection })
+}
 let presets = {
 	Generators:{
 		requiredAttribute: `energy generation`,
@@ -125,7 +140,8 @@ let substituteTooltips = [
 		`Tons of general-purpose space this outfit provides.`
 	]
 ]
-function populateTable(preset) {
+function populateTable(preset, sortConfig = null) {
+	let activePresetName = preset
 	preset = presets[preset]
 	let outfits = nodes
 		.filter(node => node.line.startsWith(`outfit `)) // select only nodes that define outfits
@@ -164,14 +180,43 @@ function populateTable(preset) {
 		...rawAttributes.filter(key => !priorityOrder.includes(key)).sort()
 	]
 	
+	// handle inline sorting logic on the outfits matrix if sortConfig criteria is passed
+	if (sortConfig && sortConfig.direction !== 'default') {
+		outfits.sort((a, b) => {
+			let getVal = (item) => {
+				if (sortConfig.key === '__name__') {
+					return item.line.slice(7).replace(/["']/g, '').trim()
+				}
+				let child = item.children.find(c => {
+					let m = c.line.trim().match(/^("(?:[^"\\]|\\.)*"|\S+)/)
+					return m && m[1].replace(/["']/g, '') === sortConfig.key
+				})
+				if (!child) return null
+				let m = child.line.trim().match(/^("(?:[^"\\]|\\.)*"|\S+)/)
+				let v = child.line.trim().substring(m[0].length).trim().replace(/^"|"$/g, '').trim()
+				return v === '' ? 'Yes' : v
+			}
+			let valA = getVal(a)
+			let valB = getVal(b)
+			if (valA === null || valA === '-') return 1
+			if (valB === null || valB === '-') return -1
+			let numA = parseFloat(valA)
+			let numB = parseFloat(valB)
+			let isNum = !isNaN(numA) && !isNaN(numB)
+			let comparison = isNum ? numA - numB : valA.localeCompare(valB)
+			return sortConfig.direction === 'desc' ? -comparison : comparison
+		})
+	}
+
 	// map header rows with tooltip description lookups matching your cell engine attributes
-	let headerRow = `<th></th>` + distinctAttributes.map(key => {
+	let headerRow = `<th data-sort="${sortConfig?.key === '__name__' ? sortConfig.direction : 'default'}" onclick="cycleSort('${activePresetName}', '__name__', '${sortConfig?.key === '__name__' ? sortConfig.direction : 'default'}')"><b>Outfit Name</b></th>` + distinctAttributes.map(key => {
 		let tip = substituteTooltips.find(sub => sub[0] === key)?.[1] || tooltips.find(attribute => attribute[0].startsWith(key))?.[1].slice(1, -1)
-		console.log(tip,key)
+		let nextDir = sortConfig?.key === key ? sortConfig.direction : 'default'
 		return tip 
-			? `<th description="${tip.replace(/"/g, `&quot;`)}"><b>${key}</b></th>` 
-			: `<th><b>${key}</b></th>`
+			? `<th data-sort="${nextDir}" description="${tip.replace(/"/g, `&quot;`)}" onclick="cycleSort('${activePresetName}', '${key}', '${nextDir}')"><b>${key}</b></th>` 
+			: `<th data-sort="${nextDir}" onclick="cycleSort('${activePresetName}', '${key}', '${nextDir}')"><b>${key}</b></th>`
 	}).join('')
+
 	
 	let bodyRows = outfits.map(outfit => {
 		let outfitName = outfit.line.slice(7).replace(/["']/g, '').trim()
