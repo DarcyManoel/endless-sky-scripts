@@ -234,7 +234,7 @@ body {
 							>th[description]:hover::after {
 								background: #222;
 								border-radius: .4em;
-								box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+								box-shadow: 0 0 12px #000;
 								color: #fff;
 								content: attr(description);
 								font-family: UbuntuSans, sans-serif;
@@ -251,7 +251,6 @@ body {
 								white-space: normal;
 								white-space: pre-line;
 								width: 280px;
-								z-index: 999;
 							}
 						}
 					}
@@ -267,7 +266,6 @@ body {
 								box-shadow: inset -2px 0 0 0 #aaa;
 								left: 0;
 								position: sticky;
-								z-index: 1;
 							}
 							>td:first-child[description] {
 								cursor: help;
@@ -276,7 +274,7 @@ body {
 							>td:first-child[description]:hover::after {
 								background: #222;
 								border-radius: .4em;
-								box-shadow: 0 0 30em black;
+								box-shadow: 0 0 12px #000;
 								color: #fff;
 								content: attr(description);
 								font-family: UbuntuSans, sans-serif;
@@ -293,7 +291,6 @@ body {
 								white-space: normal;
 								white-space: pre-line;
 								width: 280px;
-								z-index: 999;
 							}
 						}
 						>tr:nth-child(even) {
