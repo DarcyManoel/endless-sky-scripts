@@ -112,7 +112,9 @@ function cycleSort(presetName, key, currentDirection) {
 }
 let presets = {
 	Generators:{
-		requiredAttribute: `energy generation`,
+		requiredAttributes: [
+			`energy generation`
+		],
 		priorityColumns: [
 			`category`,
 			`cost`,
@@ -123,7 +125,11 @@ let presets = {
 		]
 	},
 	Shields:{
-		requiredAttribute: `shield generation`,
+		requiredAttributes: [
+			`delayed shield generation`,
+			`shield generation`
+
+		],
 		priorityColumns: [
 			`category`,
 			`cost`,
@@ -144,12 +150,21 @@ function populateTable(preset, sortConfig = null) {
 	let activePresetName = preset
 	preset = presets[preset]
 	let outfits = nodes
-		.filter(node => node.line.startsWith(`outfit `)) // select only nodes that define outfits
+		.filter(node => node.line
+			.startsWith(`outfit `)
+		) // select only nodes that define outfits
 		.filter(outfit => outfit.children
-			.some(child => child.line.includes(`category`))
+			.some(child => child.line
+				.includes(`category`)
+			)
 		) // keep only outfits with a child line containing 'category'
 		.filter(outfit => outfit.children
-			.some(child => child.line.includes(preset.requiredAttribute))
+			.some(child => preset.requiredAttributes
+				.some(attribute => child.line
+					.replace(/"/g, ``)
+					.startsWith(attribute)
+				)
+			)
 		) // filter based on the dynamic tab preset parameter
 
 	// build a dictionary mapping attribute names to their tooltip text descriptions
