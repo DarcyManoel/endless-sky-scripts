@@ -87,8 +87,25 @@ let presets = {
 			`shield energy`,
 			`shield heat`
 		]
+	},
+	Engines:{
+		requiredAttributes: [
+			`thrust`,
+			`afterburner thrust`,
+			`turn`
+
+		],
+		priorityColumns: [
+			`category`,
+			`cost`,
+			`outfit space`,
+			`thrust`,
+			`afterburner thrust`,
+			`turn`
+		]
 	}
 }
+document.getElementById(`tableCategories`).innerHTML=Object.keys(presets).map(preset => `<div class="tab" onclick="populateTable(this.innerText)">${preset}</div>`).join(``)
 let substituteTooltips = [
 	[
 		`outfit space`,

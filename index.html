@@ -14,10 +14,9 @@
 			</div>
 			<div class="dropdown">
 				<div class="dropButton">Tables</div>
-				<div class="dropContent">
-					<div class="tab" onclick="populateTable(this.innerText)">Generators</div>
-					<div class="tab" onclick="populateTable(this.innerText)">Shields</div>
-				</div>
+				<!-- tableCategories is populated on page load from the presets defined in scripts.js -->
+				<div class="dropContent" id="tableCategories"></div>
+				<!--  -->
 			</div>
 			<div class="dropdown">
 				<div class="dropButton">Scripts</div>
