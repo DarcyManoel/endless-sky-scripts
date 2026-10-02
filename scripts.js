@@ -1,49 +1,3 @@
-// content management
-let selectedCategory
-function selectCategory(categoryName) {
-	// cancel function if selecting the already selected category
-	if(categoryName === selectedCategory) {
-		return
-	}
-	// maintain a visual for a selected category
-	for(let category of document.getElementsByClassName(`category`)) {
-		if(category.innerText === categoryName) {
-			category.classList.add(`is-selected`)
-			continue
-		}
-		category.classList.remove(`is-selected`)
-	}
-	//
-	if(selectedCategory) {
-		document.getElementById(`sidebar${selectedCategory}`).classList.remove(`is-selected`)
-		document.getElementById(`content${selectedCategory}`).classList.remove(`is-selected`)
-	}
-	selectedCategory = categoryName
-	document.getElementById(`sidebar${selectedCategory}`).classList.add(`is-selected`)
-	document.getElementById(`content${selectedCategory}`).classList.add(`is-selected`)
-}
-let selectedTab
-function selectTab(tabName) {
-	// cancel function if selecting the already selected tab
-	if(tabName === selectedTab) {
-		return
-	}
-	// maintain a visual for a selected tab
-	for(let tab of document.getElementsByClassName(`tab`)) {
-		if(tab.innerText === tabName) {
-			tab.classList.add(`is-selected`)
-			continue
-		}
-		tab.classList.remove(`is-selected`)
-	}
-	//
-	if(selectedTab) {
-		document.getElementById(`tab${selectedTab}`).classList.remove(`is-selected`)
-	}
-	selectedTab = tabName
-	document.getElementById(`tab${selectedTab}`).classList.add(`is-selected`)
-}
-//
 let generationTextHeader = `#\tthis text was generated using endless-sky-scripts on github\n`
 function scriptCheaterSales() {
 	let shipNames = nodes
@@ -79,6 +33,7 @@ function scriptCheaterMapEvents() {
 		.sort()
 	copyToClipboard(`${generationTextHeader}event "cheater: reveal vanilla systems"\n\tvisit ${systemNames.join(`\n\tvisit `)}\nevent "cheater: reveal shrouded systems"${shroudedSystemNames.map(system => `\n\tsystem ${system}\n\t\tremove shrouded`).join(``)}`) // copy formatted event block that marks all vanilla systems as visited to clipboard
 }
+
 // unused upload png function
 // function scriptConstellationsShip() {
 // 	return new Promise((resolve, reject) => {
@@ -95,14 +50,7 @@ function scriptCheaterMapEvents() {
 // 		input.click()
 // 	})
 // }
-// global tracking matrix cache for column state operations
-let currentTableData = {
-	outfits: [],
-	presetName: '',
-	sortColumn: null, // Track which index/key name is active
-	sortDirection: 0  // 0 = Default, 1 = Descending, 2 = Ascending
-}
-//
+
 function cycleSort(presetName, key, currentDirection) {
 	let nextDirection = 'default'
 	if (currentDirection === 'default') nextDirection = 'desc'
@@ -136,6 +84,7 @@ let presets = {
 			`outfit space`,
 			`shield generation`,
 			`shield energy multiplier`,
+			`shield energy`,
 			`shield heat`
 		]
 	}
@@ -146,7 +95,15 @@ let substituteTooltips = [
 		`Tons of general-purpose space this outfit provides.`
 	]
 ]
-function populateTable(preset, sortConfig = null) {
+let lastPreset = Object.keys(presets)[0]
+function populateTable(preset, sortConfig = null){
+	if (preset) {
+		lastPreset = preset
+	}else if (lastPreset) {
+		preset = lastPreset
+	}else{
+		return
+	}
 	let activePresetName = preset
 	preset = presets[preset]
 	let outfits = nodes
@@ -274,7 +231,7 @@ function populateTable(preset, sortConfig = null) {
 		return `<tr>${nameCell}${dataCells}</tr>`
 		//
 	}).join(``)
-	document.getElementById(`contentTables`).innerHTML = `
+	document.getElementById(`content`).innerHTML = `
 		<table class="data-table">
 			<thead>
 				<tr>${headerRow}</tr>
@@ -323,6 +280,7 @@ function importData() {
 			}catch{}
 		}
 		parseLinesToTree()
+		populateTable()
 	}
 	document.body.appendChild(input)
 	input.click()

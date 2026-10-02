@@ -5,50 +5,35 @@
 		<title>Endless Sky Scripts</title>
 	</head>
 	<body spellcheck="false">
-		<div id="topbar">
-			<div onclick="importData()">Upload Data</div>
-			<div></div>
-			<div class="category" onclick="selectCategory(this.innerText)">Tables</div>
-			&#183;
-			<div class="category" onclick="selectCategory(this.innerText)">Scripts</div>
-		</div>
-		<div id="content">
-			<div id="sidebar">
-				<div id="sidebarTables">
+		<header>
+			<div class="dropdown">
+				<div class="dropButton">Actions</div>
+				<div class="dropContent">
+					<div onclick="importData()">Upload Data</div>
+				</div>
+			</div>
+			<div class="dropdown">
+				<div class="dropButton">Tables</div>
+				<div class="dropContent">
 					<div class="tab" onclick="populateTable(this.innerText)">Generators</div>
 					<div class="tab" onclick="populateTable(this.innerText)">Shields</div>
 				</div>
-				<div id="sidebarScripts">
-					<div class="tab" onclick="selectTab(this.innerText)">Cheater</div>
-				</div>
 			</div>
-			<div id="content">
-				<div id="contentTables">
-				</div>
-				<div id="contentScripts">
-					<div id="tabCheater">
-						<div class="script" onclick="scriptCheaterMapEvents()">
-							<div class="title">
-								Map Events
-							</div>
-							<div class="description">
-								<li><b>Event: </b>reveals all systems.</li>
-								<li><b>Event: </b>unshrouds shrouded systems.</li>
-							</div>
-						</div>
-						<div class="script" onclick="scriptCheaterSales()">
-							<div class="title">
-								Sales
-							</div>
-							<div class="description">
-								<li><b>Shipyard: </b>contains all base and variant ships.</li>
-								<li><b>Outfitter: </b>contains all outfits.</li>
-							</div>
+			<div class="dropdown">
+				<div class="dropButton">Scripts</div>
+				<div class="dropContent">
+					<div class="dropdown">
+						<div class="dropButton">Cheater</div>
+						<div class="dropContent">
+							<div onclick="scriptCheaterMapEvents()">Map Events</div>
+							<div onclick="scriptCheaterSales()">Sales</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</header>
+		<main id="content">
+		</main>
 	</body>
 	<script type="text/javascript"src="scripts.js"></script>
 </html>
