@@ -259,7 +259,7 @@ function populateTable(preset, sortConfig = null){
 		</table>
 	`
 }
-
+document.querySelectorAll('.dropdown').forEach(element => element.classList.add('unavailable'))
 let nodes = []
 function parseLinesToTree() {
 	nodes = []
@@ -298,6 +298,7 @@ function importData() {
 		}
 		parseLinesToTree()
 		populateTable()
+		document.querySelectorAll('.unavailable').forEach(element => element.classList.remove('unavailable'))
 	}
 	document.body.appendChild(input)
 	input.click()

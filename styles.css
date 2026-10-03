@@ -19,7 +19,8 @@
 	src: url(fonts/UbuntuSans-SemiBold.ttf);
 }
 body{
-	background: white;
+	background: #1a1a1a;
+	color: lightgrey;
 	display: flex;
 	flex-direction: column;
 	font-family: UbuntuSans;
@@ -42,46 +43,53 @@ body{
 			width: 1px;
 		}
 		>[onclick]{
-			color: black;
 			cursor: pointer;
 			position: relative;
 		}
 		>[onclick]:hover{
-			background: rgba(170, 170, 170, .33);
+			background: #333;
 		}
 		>[onclick].is-selected{
 			background: rgba(170, 170, 170, 1);
 		}
+		>div{
+			padding: .5em 1em;
+		}
 		>.dropdown{
 			>.dropButton{
-				padding: .5em 1em;
+				/*padding: .5em 1em;*/
 			}
 			>.dropContent{
-				margin: 0 .5em;
+				margin: .5em -.5em;
 			}
+		}
+		>.unavailable{
+			pointer-events: none;
+			opacity: .5;
+			transition: none;
 		}
 		.dropdown{
 			cursor: s-resize;
 			position: relative;
 			z-index: 4;
 			.dropContent{
-				backdrop-filter: blur(.2em);
-				background-color: rgba(255, 255, 255, .75);
+				backdrop-filter: blur(.5em);
+				background-color: rgba(26, 26, 26, .75);
 				border-radius: 0 0 1em 1em;
-				box-shadow: 0 0 16px 0 rgba(0, 0, 0, .25);
+				box-shadow: 0 0 16px 0 rgba(255, 255, 255, .25);
 				clip-path: inset(0px -100vw -100vw -100vw);
 				display: none;
 				position: absolute;
 				white-space: nowrap;
 				>div{
-					padding: .5em 1em .5em .5em;
+					padding: .5em 1.5em .5em 1em;
 					position: relative;
 				}
 				>div[onclick]{
 					cursor: pointer;
 				}
 				>div:before{
-					background-color: black;
+					background-color: lightgrey;
 					border-radius: 100%;
 					content: '';
 					height: .5em;
@@ -97,9 +105,9 @@ body{
 					color: grey;
 				}
 				>div:hover{
-					color: black;
-					padding-left: 1em;
-					padding-right: .5em;
+					color: lightgrey;
+					padding-left: 1.5em;
+					padding-right: 1em;
 				}
 				>div:hover:before{
 					opacity: 1;
@@ -123,22 +131,23 @@ body{
 		}
 	}
 	main{
-		background: #eee;
+		background-color: #1e1e1e;
+		background-image:
+			linear-gradient(to right, #333 1px, transparent 1px),
+			linear-gradient(to bottom, #333 1px, transparent 1px);
+		background-size: 40px 40px;
 		width: 100%;
 		height: 100%;
 		>table{
-			border-collapse: collapse;
+			border-spacing: 0;
+			color: lightgrey;
 			>thead{
 				>tr{
 					>th{
-						/*background-color: #bbb;*/
-						backdrop-filter: blur(.5em);
-						background-color: rgba(127, 127, 127, .3);
-						box-shadow:
-							inset 0 -2px 0 0 #aaa,
-							inset 0 2px 0 0 #aaa;
+						background: #1a1a1a;
+						border: .5px solid #333;
 						cursor: pointer;
-						padding: .5em .5em .5em 1.5em;
+						padding: .5em 1em .5em 1.5em;
 						pointer-events: initial;
 						position: sticky;
 						text-align: left;
@@ -146,20 +155,9 @@ body{
 						z-index: 2;
 					}
 					>th:first-child{
-						box-shadow:
-							inset -2px 0 0 0 #aaa,
-							inset 2px 0 0 0 #aaa,
-							inset 0 -2px 0 0 #aaa,
-							inset 0 2px 0 0 #aaa;
 						left: 0;
 						position: sticky;
 						z-index: 3;
-					}
-					>th:last-child{
-						box-shadow:
-							inset -2px 0 0 0 #aaa,
-							inset 0 -2px 0 0 #aaa,
-							inset 0 2px 0 0 #aaa;
 					}
 					>th:before{
 						font-size: .75em;
@@ -185,7 +183,8 @@ body{
 					}
 					>th[description]{
 						cursor: help;
-						text-decoration: underline dotted #000;
+						text-decoration: underline dotted #999;
+						text-underline-offset: .2em;
 					}
 					>th[description]:hover:after{
 						background: #222;
@@ -211,21 +210,18 @@ body{
 			}
 			>tbody{
 				>tr{
-					background-color: white;
 					>td{
+						background: #1e1e1e;
+						border: .5px solid #333;
 						line-height: 1.5em;
-						padding: .5em .75em;
+						padding: .5em;
 						white-space: nowrap;
+						transition: none;
 					}
 					>td:first-child{
-						backdrop-filter: blur(.5em);
-						background-color: rgba(127, 127, 127, .2);
-						box-shadow:
-							inset -2px 0 0 0 #aaa,
-							inset 2px 0 0 0 #aaa;
+						background: #1a1a1a;
 						left: 0;
 						position: sticky;
-						transition: none;
 					}
 					>td:first-child[description]{
 						cursor: help;
@@ -240,7 +236,7 @@ body{
 						font-family: UbuntuSans, sans-serif;
 						font-size: .85em;
 						font-weight: normal;
-						left: 170%;
+						left: 50%;
 						margin: 1em;
 						opacity: 0;
 						overflow-y: auto;
@@ -248,7 +244,7 @@ body{
 						pointer-events: none;
 						position: fixed;
 						text-decoration: none;
-						top: 20%;
+						top: 30%;
 						translate: -50%;
 						transition: none !important;
 						white-space: pre-line;
@@ -257,29 +253,13 @@ body{
 					>td:first-child[description]:hover:after{
 						opacity: 1;
 					}
-					>td:last-child{
-						box-shadow:
-							inset -2px 0 0 0 #aaa;
-					}
-				}
-				>tr:nth-child(even){
-					background-color: #eee;
-				}
-				>tr:last-child{
-					box-shadow: inset 0 -2px 0 0 #aaa;
-					>td:first-child{
-						box-shadow:
-							inset -2px 0 0 0 #aaa,
-							inset 2px 0 0 0 #aaa,
-							inset 0 -2px 0 0 #aaa;
-					}
 				}
 				>tr:hover{
-					background-color: #eff;
-					box-shadow: inset 0 0 10px 2px rgba(0, 0, 0, 0.1);
-					>td:first-child{
-						background-color: #eff;
-						box-shadow: inset 0 0 10px 2px rgba(0, 0, 0, 0.1);
+					>td{
+						background: #222;
+						border-width: .5px 0;
+						border-color: red;
+						padding: .5em calc(.5em + .5px)!important;
 					}
 				}
 			}
