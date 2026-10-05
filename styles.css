@@ -146,65 +146,76 @@ body{
 					>th{
 						background: #1a1a1a;
 						border: .5px solid #333;
-						cursor: pointer;
-						padding: .5em 1em .5em 1.5em;
 						pointer-events: initial;
 						position: sticky;
 						text-align: left;
 						top: 0;
+						vertical-align: top;
+						white-space: nowrap;
 						z-index: 2;
+						>.reorganise{
+							display: flex;
+							justify-content: space-around;
+							>div{
+								cursor: pointer;
+							}
+						}
+						>.name{
+							padding: .5em 1em .5em 1.5em;
+							position: relative;
+						}
+						>.name:before{
+							font-size: .75em;
+							margin-left: .5em;
+							opacity: 0;
+							position: absolute;
+							left: 0;
+							top: 50%;
+							transition: opacity .15s;
+							translate: 0 -50%;
+						}
+						>.name:hover:before{
+							content: '\25CF';
+							opacity: 1;
+						}
+						>.name[data-sort="desc"]:before{
+							content: '\25BC';
+							opacity: 1;
+						}
+						>.name[data-sort="asc"]:before{
+							content: '\25B2';
+							opacity: 1;
+						}
+						>.name[description]{
+							cursor: help;
+							text-decoration: underline dotted #999;
+							text-underline-offset: .2em;
+						}
+						>.name[description]:hover:after{
+							background: #222;
+							border-radius: .4em;
+							box-shadow: 0 0 1em #000;
+							color: #fff;
+							content: attr(description);
+							font-family: UbuntuSans, sans-serif;
+							font-size: .85em;
+							font-weight: normal;
+							left: 50%;
+							overflow-y: auto;
+							padding: .6em .8em;
+							position: fixed;
+							text-decoration: none;
+							top: 30%;
+							translate: -50%;
+							transition: none !important;
+							white-space: pre-line;
+							width: 280px;
+						}
 					}
 					>th:first-child{
 						left: 0;
 						position: sticky;
 						z-index: 3;
-					}
-					>th:before{
-						font-size: .75em;
-						margin-left: .5em;
-						opacity: 0;
-						position: absolute;
-						left: 0;
-						top: 50%;
-						transition: opacity .15s;
-						translate: 0 -50%;
-					}
-					>th:hover:before{
-						content: '\25CF';
-						opacity: 1;
-					}
-					>th[data-sort="desc"]:before{
-						content: '\25BC';
-						opacity: 1;
-					}
-					>th[data-sort="asc"]:before{
-						content: '\25B2';
-						opacity: 1;
-					}
-					>th[description]{
-						cursor: help;
-						text-decoration: underline dotted #999;
-						text-underline-offset: .2em;
-					}
-					>th[description]:hover:after{
-						background: #222;
-						border-radius: .4em;
-						box-shadow: 0 0 1em #000;
-						color: #fff;
-						content: attr(description);
-						font-family: UbuntuSans, sans-serif;
-						font-size: .85em;
-						font-weight: normal;
-						left: 50%;
-						overflow-y: auto;
-						padding: .6em .8em;
-						position: fixed;
-						text-decoration: none;
-						top: 30%;
-						translate: -50%;
-						transition: none !important;
-						white-space: pre-line;
-						width: 280px;
 					}
 				}
 			}
@@ -257,8 +268,8 @@ body{
 				>tr:hover{
 					>td{
 						background: #222;
-						border-width: .5px 0;
 						border-color: red;
+						border-width: .5px 0;
 						padding: .5em calc(.5em + .5px)!important;
 					}
 				}

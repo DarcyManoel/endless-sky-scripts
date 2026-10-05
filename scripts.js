@@ -51,12 +51,18 @@ function scriptCheaterMapEvents() {
 // 	})
 // }
 
-function cycleSort(presetName, key, currentDirection) {
+function cycleSort(key, currentDirection) {
 	let nextDirection = 'default'
 	if (currentDirection === 'default') nextDirection = 'desc'
 	else if (currentDirection === 'desc') nextDirection = 'asc'
-	
-	populateTable(presetName, { key: key, direction: nextDirection })
+	lastSortConfig = { key: key, direction: nextDirection }
+	populateTable()
+}
+function reorganiseColumn(moveForwards, key) {
+	let keyPosition = attributesOrder.indexOf(key)
+	attributesOrder.splice(keyPosition, 1)
+	attributesOrder.splice(moveForwards ? keyPosition - 1 : keyPosition + 1, 0, key)
+	populateTable()
 }
 let presets = {
 	Generators:{
@@ -105,24 +111,22 @@ let presets = {
 		]
 	}
 }
-document.getElementById(`tableCategories`).innerHTML=Object.keys(presets).map(preset => `<div class="tab" onclick="populateTable(this.innerText)">${preset}</div>`).join(``)
+document.getElementById(`tableCategories`).innerHTML=Object.keys(presets).map(preset => `<div class="tab" onclick="lastPresetName='',populateTable(this.innerText)">${preset}</div>`).join(``)
 let substituteTooltips = [
 	[
 		`outfit space`,
 		`Tons of general-purpose space this outfit provides.`
 	]
 ]
-let lastPreset = Object.keys(presets)[0]
-function populateTable(preset, sortConfig = null){
-	if (preset) {
-		lastPreset = preset
-	}else if (lastPreset) {
-		preset = lastPreset
-	}else{
-		return
+let lastPresetName = Object.keys(presets)[0]
+let attributesOrder
+let lastSortConfig
+function populateTable(presetName){
+	let activePresetName
+	if (!presetName && lastPresetName) {
+		presetName = lastPresetName
 	}
-	let activePresetName = preset
-	preset = presets[preset]
+	preset = presets[presetName]
 	let outfits = nodes
 		.filter(node => node.line
 			.startsWith(`outfit `)
@@ -164,21 +168,23 @@ function populateTable(preset, sortConfig = null){
 		)
 	)].filter(key => key !== 'description' && key !== 'thumbnail')
 
-	let distinctAttributes = [
-		...priorityOrder.filter(key => rawAttributes.includes(key)),
-		...rawAttributes.filter(key => !priorityOrder.includes(key)).sort()
-	]
+	if(!attributesOrder || presetName !== lastPresetName){
+		attributesOrder = [
+			...priorityOrder.filter(key => rawAttributes.includes(key)),
+			...rawAttributes.filter(key => !priorityOrder.includes(key)).sort()
+		]
+	}
 	
-	// handle inline sorting logic on the outfits matrix if sortConfig criteria is passed
-	if (sortConfig && sortConfig.direction !== 'default') {
+	// handle inline sorting logic on the outfits matrix if lastSortConfig criteria is passed
+	if (lastSortConfig && lastSortConfig.direction !== 'default') {
 		outfits.sort((a, b) => {
 			let getVal = (item) => {
-				if (sortConfig.key === '__name__') {
+				if (lastSortConfig.key === '__name__') {
 					return item.line.slice(7).replace(/["']/g, '').trim()
 				}
 				let child = item.children.find(c => {
 					let m = c.line.trim().match(/^("(?:[^"\\]|\\.)*"|\S+)/)
-					return m && m[1].replace(/["']/g, '') === sortConfig.key
+					return m && m[1].replace(/["']/g, '') === lastSortConfig.key
 				})
 				if (!child) return null
 				let m = child.line.trim().match(/^("(?:[^"\\]|\\.)*"|\S+)/)
@@ -193,17 +199,21 @@ function populateTable(preset, sortConfig = null){
 			let numB = parseFloat(valB)
 			let isNum = !isNaN(numA) && !isNaN(numB)
 			let comparison = isNum ? numA - numB : valA.localeCompare(valB)
-			return sortConfig.direction === 'desc' ? -comparison : comparison
+			return lastSortConfig.direction === 'desc' ? -comparison : comparison
 		})
 	}
 
 	// map header rows with tooltip description lookups matching your cell engine attributes
-	let headerRow = `<th data-sort="${sortConfig?.key === '__name__' ? sortConfig.direction : 'default'}" onclick="cycleSort('${activePresetName}', '__name__', '${sortConfig?.key === '__name__' ? sortConfig.direction : 'default'}')"><b>Outfit Name</b></th>` + distinctAttributes.map(key => {
+	let headerRow = `<th data-sort="${lastSortConfig?.key === '__name__' ? lastSortConfig.direction : 'default'}" onclick="cycleSort('__name__', '${lastSortConfig?.key === '__name__' ? lastSortConfig.direction : 'default'}')"><b>Outfit Name</b></th>` + attributesOrder.map(key => {
 		let tip = substituteTooltips.find(sub => sub[0] === key)?.[1] || tooltips.find(attribute => attribute[0].startsWith(key))?.[1].slice(1, -1)
-		let nextDir = sortConfig?.key === key ? sortConfig.direction : 'default'
-		return tip 
-			? `<th data-sort="${nextDir}" description="${tip.replace(/"/g, `&quot;`)}" onclick="cycleSort('${activePresetName}', '${key}', '${nextDir}')"><b>${key}</b></th>` 
-			: `<th data-sort="${nextDir}" onclick="cycleSort('${activePresetName}', '${key}', '${nextDir}')"><b>${key}</b></th>`
+		let nextDir = lastSortConfig?.key === key ? lastSortConfig.direction : 'default'
+		return	`<th>
+					<div class="reorganise">
+						<div onclick="reorganiseColumn(1, '${key}')"><</div>
+						<div onclick="reorganiseColumn(0, '${key}')">></div>
+					</div>
+					<div class="name" data-sort="${nextDir}" ${tip?`description="${tip.replace(/"/g, `&quot;`)}"`:``} onclick="cycleSort('${key}', '${nextDir}')">${key}</div>
+				</th>` 
 	}).join('')
 
 	
@@ -233,7 +243,7 @@ function populateTable(preset, sortConfig = null){
 			}
 		})
 		// assemble row cell blocks according to distinct attributes order
-		let dataCells = distinctAttributes.map(key => {
+		let dataCells = attributesOrder.map(key => {
 			let value = outfitAttributes.has(key) ? outfitAttributes.get(key) : '-'
 			// handle attributes that exist as a bool and without a value
 			if (outfitAttributes.has(key) && value === ``) {
@@ -258,6 +268,9 @@ function populateTable(preset, sortConfig = null){
 			</tbody>
 		</table>
 	`
+	if (preset) {
+		lastPresetName = presetName
+	}
 }
 document.querySelectorAll('.dropdown').forEach(element => element.classList.add('unavailable'))
 let nodes = []
