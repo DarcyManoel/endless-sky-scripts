@@ -63,6 +63,9 @@ function dragStart(event, index) {
 	draggedColumnIndex = index
 	event.dataTransfer.effectAllowed = 'move'
 	event.dataTransfer.setData('text/plain', index)
+	// class to disable pseudo elements such as sorting indicators, descriptions, or tooltips
+	document.body.classList.add('column-dragging')
+	//
 }
 function dragOver(event, targetIndex) {
 	event.preventDefault()
@@ -72,14 +75,19 @@ function dragOver(event, targetIndex) {
 	const midPoint = rect.width / 2
 	if (draggedColumnIndex < targetIndex && mouseX < midPoint) return
 	if (draggedColumnIndex > targetIndex && mouseX > midPoint) return
-
 	// update attributes order array
 	const movedKey = attributesOrder[draggedColumnIndex]
 	attributesOrder.splice(draggedColumnIndex, 1)
 	attributesOrder.splice(targetIndex, 0, movedKey)
 	//
-
 	draggedColumnIndex = targetIndex
+	populateTable()
+}
+function dragEnd() {
+	draggedColumnIndex = null
+	// remove dragging class
+	document.body.classList.remove('column-dragging')
+	//
 	populateTable()
 }
 let presets = {
@@ -215,7 +223,8 @@ function populateTable(presetName){
 		return	`<th draggable="true" 
 		             class="draggable-header"
 		             ondragstart="dragStart(event, ${index})"
-		             ondragover="dragOver(event, ${index})">
+		             ondragover="dragOver(event, ${index})"
+		             ondragend="dragEnd()">
 					<div class="name" data-sort="${nextDir}" ${tip?`description="${tip.replace(/"/g, `&quot;`)}"`:``} onclick="cycleSort('${key}', '${nextDir}')">${key}</div>
 				</th>` 
 	}).join('')

@@ -278,3 +278,16 @@ body{
 		}
 	}
 }
+/* disable description tooltips when dragging */
+body.column-dragging [description]:after,
+body.column-dragging td:first-child[description]:after {
+	display: none !important;
+	opacity: 0 !important;
+	visibility: hidden !important;
+	transition: none !important;
+}
+/* disable sorting indicator dot on hover when dragging */
+body.column-dragging .name:hover:before {
+	content: "" !important;
+	opacity: 0 !important;
+}
