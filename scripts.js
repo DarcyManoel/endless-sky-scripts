@@ -57,6 +57,7 @@ function cycleSort(key, currentDirection) {
 	else if (currentDirection === 'desc') nextDirection = 'asc'
 	lastSortConfig = { key: key, direction: nextDirection }
 	populateTable()
+	console.log(lastSortConfig)
 }
 let draggedColumnIndex = null
 function dragStart(event, index) {
@@ -217,16 +218,15 @@ function populateTable(presetName){
 			let comparison = isNum ? numA - numB : valA.localeCompare(valB)
 			return lastSortConfig.direction === 'desc' ? -comparison : comparison
 		})
-	let headerRow = `<th data-sort="${lastSortConfig?.key === '__name__' ? lastSortConfig.direction : 'default'}" onclick="cycleSort('__name__', '${lastSortConfig?.key === '__name__' ? lastSortConfig.direction : 'default'}')"><b>Outfit Name</b></th>` + attributesOrder.map((key, index) => {
-		let tip = substituteTooltips.find(sub => sub[0] === key)?.[1] || tooltips.find(attribute => attribute[0].startsWith(key))?.[1].slice(1, -1)
+	let headerRow = `<th><div class="name" data-sort="${lastSortConfig?.key === '__name__' ? lastSortConfig.direction : 'default'}" onclick="cycleSort('__name__', '${lastSortConfig?.key === '__name__' ? lastSortConfig.direction : 'default'}')">Outfit Name</div></th>` + attributesOrder.map((key, index) => {
+		let tip = substituteTooltips.find(sub => sub === key)?.[1] || tooltips.find(attribute => attribute[0].startsWith(key))?.[1].slice(1, -1)
 		let nextDir = lastSortConfig?.key === key ? lastSortConfig.direction : 'default'
-		return	`<th draggable="true" 
-		             class="draggable-header"
-		             ondragstart="dragStart(event, ${index})"
-		             ondragover="dragOver(event, ${index})"
-		             ondragend="dragEnd()">
+		return	`<th ondragover="dragOver(event, ${index})" ondragend="dragEnd()">
+					<div class="drag-circle" 
+					     draggable="true" 
+					     ondragstart="dragStart(event, ${index})"></div>
 					<div class="name" data-sort="${nextDir}" ${tip?`description="${tip.replace(/"/g, `&quot;`)}"`:``} onclick="cycleSort('${key}', '${nextDir}')">${key}</div>
-				</th>` 
+				</th>`
 	}).join('')
 	let bodyRows = outfits.map(outfit => {
 		let outfitName = outfit.line.slice(7).replace(/["']/g, '').trim()
