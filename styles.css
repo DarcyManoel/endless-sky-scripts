@@ -146,6 +146,7 @@ body{
 					>th{
 						background: #1a1a1a;
 						border: .5px solid #333;
+						cursor: grab;
 						pointer-events: initial;
 						position: sticky;
 						text-align: left;

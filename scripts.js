@@ -58,10 +58,28 @@ function cycleSort(key, currentDirection) {
 	lastSortConfig = { key: key, direction: nextDirection }
 	populateTable()
 }
-function reorganiseColumn(moveForwards, key) {
-	let keyPosition = attributesOrder.indexOf(key)
-	attributesOrder.splice(keyPosition, 1)
-	attributesOrder.splice(moveForwards ? keyPosition - 1 : keyPosition + 1, 0, key)
+let draggedColumnIndex = null
+function dragStart(event, index) {
+	draggedColumnIndex = index
+	event.dataTransfer.effectAllowed = 'move'
+	event.dataTransfer.setData('text/plain', index)
+}
+function dragOver(event, targetIndex) {
+	event.preventDefault()
+	if (draggedColumnIndex === null || draggedColumnIndex === targetIndex) return
+	const rect = event.currentTarget.getBoundingClientRect()
+	const mouseX = event.clientX - rect.left
+	const midPoint = rect.width / 2
+	if (draggedColumnIndex < targetIndex && mouseX < midPoint) return
+	if (draggedColumnIndex > targetIndex && mouseX > midPoint) return
+
+	// update attributes order array
+	const movedKey = attributesOrder[draggedColumnIndex]
+	attributesOrder.splice(draggedColumnIndex, 1)
+	attributesOrder.splice(targetIndex, 0, movedKey)
+	//
+
+	draggedColumnIndex = targetIndex
 	populateTable()
 }
 let presets = {
@@ -123,9 +141,7 @@ let attributesOrder
 let lastSortConfig
 function populateTable(presetName){
 	let activePresetName
-	if (!presetName && lastPresetName) {
-		presetName = lastPresetName
-	}
+	if (!presetName && lastPresetName) presetName = lastPresetName
 	preset = presets[presetName]
 	let outfits = nodes
 		.filter(node => node.line
@@ -144,7 +160,6 @@ function populateTable(presetName){
 				)
 			)
 		) // filter based on the dynamic tab preset parameter
-
 	// build a dictionary mapping attribute names to their tooltip text descriptions
 	let tooltips = nodes
 		.filter(node => node.line.startsWith(`tip `))
@@ -157,7 +172,6 @@ function populateTable(presetName){
 			return [key, descValue]
 		})
 	//
-
 	let priorityOrder = preset.priorityColumns || [`category`, `cost`, `outfit space`]
 	let rawAttributes = [...new Set(
 		outfits.flatMap(outfit =>
@@ -167,21 +181,15 @@ function populateTable(presetName){
 			)
 		)
 	)].filter(key => key !== 'description' && key !== 'thumbnail')
-
-	if(!attributesOrder || presetName !== lastPresetName){
+	if(!attributesOrder || presetName !== lastPresetName)
 		attributesOrder = [
 			...priorityOrder.filter(key => rawAttributes.includes(key)),
 			...rawAttributes.filter(key => !priorityOrder.includes(key)).sort()
 		]
-	}
-	
-	// handle inline sorting logic on the outfits matrix if lastSortConfig criteria is passed
-	if (lastSortConfig && lastSortConfig.direction !== 'default') {
+	if (lastSortConfig && lastSortConfig.direction !== 'default')
 		outfits.sort((a, b) => {
 			let getVal = (item) => {
-				if (lastSortConfig.key === '__name__') {
-					return item.line.slice(7).replace(/["']/g, '').trim()
-				}
+				if (lastSortConfig.key === '__name__') return item.line.slice(7).replace(/["']/g, '').trim()
 				let child = item.children.find(c => {
 					let m = c.line.trim().match(/^("(?:[^"\\]|\\.)*"|\S+)/)
 					return m && m[1].replace(/["']/g, '') === lastSortConfig.key
@@ -201,22 +209,16 @@ function populateTable(presetName){
 			let comparison = isNum ? numA - numB : valA.localeCompare(valB)
 			return lastSortConfig.direction === 'desc' ? -comparison : comparison
 		})
-	}
-
-	// map header rows with tooltip description lookups matching your cell engine attributes
-	let headerRow = `<th data-sort="${lastSortConfig?.key === '__name__' ? lastSortConfig.direction : 'default'}" onclick="cycleSort('__name__', '${lastSortConfig?.key === '__name__' ? lastSortConfig.direction : 'default'}')"><b>Outfit Name</b></th>` + attributesOrder.map(key => {
+	let headerRow = `<th data-sort="${lastSortConfig?.key === '__name__' ? lastSortConfig.direction : 'default'}" onclick="cycleSort('__name__', '${lastSortConfig?.key === '__name__' ? lastSortConfig.direction : 'default'}')"><b>Outfit Name</b></th>` + attributesOrder.map((key, index) => {
 		let tip = substituteTooltips.find(sub => sub[0] === key)?.[1] || tooltips.find(attribute => attribute[0].startsWith(key))?.[1].slice(1, -1)
 		let nextDir = lastSortConfig?.key === key ? lastSortConfig.direction : 'default'
-		return	`<th>
-					<div class="reorganise">
-						<div onclick="reorganiseColumn(1, '${key}')"><</div>
-						<div onclick="reorganiseColumn(0, '${key}')">></div>
-					</div>
+		return	`<th draggable="true" 
+		             class="draggable-header"
+		             ondragstart="dragStart(event, ${index})"
+		             ondragover="dragOver(event, ${index})">
 					<div class="name" data-sort="${nextDir}" ${tip?`description="${tip.replace(/"/g, `&quot;`)}"`:``} onclick="cycleSort('${key}', '${nextDir}')">${key}</div>
 				</th>` 
 	}).join('')
-
-	
 	let bodyRows = outfits.map(outfit => {
 		let outfitName = outfit.line.slice(7).replace(/["']/g, '').trim()
 		let outfitAttributes = new Map()
@@ -230,25 +232,17 @@ function populateTable(presetName){
 				// strip the key out to isolate the trailing attribute value
 				let cleanValue = rawLine.substring(rawKey.length).trim().replace(/^"|"$/g, '').trim()
 				// store thumbnail and description for the hover tooltip
-				if (cleanKey === 'thumbnail') {
-					tooltipText.thumbnail = cleanValue
-				}
-				if (cleanKey === 'description') {
-					tooltipText.description = cleanValue
-				}
+				if (cleanKey === 'thumbnail') tooltipText.thumbnail = cleanValue
+				if (cleanKey === 'description') tooltipText.description = cleanValue
 				//
-				else {
-					outfitAttributes.set(cleanKey, cleanValue)
-				}
+				else outfitAttributes.set(cleanKey, cleanValue)
 			}
 		})
-		// assemble row cell blocks according to distinct attributes order
+		// assemble row cell blocks according to attributes order
 		let dataCells = attributesOrder.map(key => {
 			let value = outfitAttributes.has(key) ? outfitAttributes.get(key) : '-'
 			// handle attributes that exist as a bool and without a value
-			if (outfitAttributes.has(key) && value === ``) {
-				value = `Yes`
-			}
+			if (outfitAttributes.has(key) && value === ``) value = `Yes`
 			//
 			return `<td>${value}</td>`
 		}).join('')
@@ -268,9 +262,7 @@ function populateTable(presetName){
 			</tbody>
 		</table>
 	`
-	if (preset) {
-		lastPresetName = presetName
-	}
+	if (preset) lastPresetName = presetName
 }
 document.querySelectorAll('.dropdown').forEach(element => element.classList.add('unavailable'))
 let nodes = []
@@ -285,9 +277,7 @@ function parseLinesToTree() {
 			if(!line.trim()) continue // skip empty or whitespace-only lines since they hold no data
 			let indent = line.match(/^\t*/)[0].length // count leading tabs to determine indentation depth
 			let node = {line:line.trim(), children:[]} // create a node object with line content and empty children array
-			while(stack.length && stack.at(-1).indent >= indent) {
-				stack.pop() // remove the most recently stacked node since its indent is too deep to be the parent of the current line
-			} // ensure the stack's top node has an indent smaller than the current line so we attach the node to the correct parent
+			while(stack.length && stack.at(-1).indent >= indent) stack.pop() // ensure the stack's top node has an indent smaller than the current line so we attach the node to the correct parent
 			stack.at(-1).children.push(node) // attach current node to the most recent valid parent
 			stack.push({...node, indent}) // push current node onto stack with its indent level to track nesting
 		}
