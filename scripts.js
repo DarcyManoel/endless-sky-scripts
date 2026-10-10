@@ -64,6 +64,7 @@ function dragStart(event, index) {
 	draggedColumnIndex = index
 	event.dataTransfer.effectAllowed = 'move'
 	event.dataTransfer.setData('text/plain', index)
+	event.target.classList.add('dragging')
 	// class to disable pseudo elements such as sorting indicators, descriptions, or tooltips
 	document.body.classList.add('column-dragging')
 	//
@@ -222,7 +223,7 @@ function populateTable(presetName){
 		let tip = substituteTooltips.find(sub => sub === key)?.[1] || tooltips.find(attribute => attribute[0].startsWith(key))?.[1].slice(1, -1)
 		let nextDir = lastSortConfig?.key === key ? lastSortConfig.direction : 'default'
 		return	`<th ondragover="dragOver(event, ${index})" ondragend="dragEnd()">
-					<div class="drag-circle" 
+					<div class="drag-circle${draggedColumnIndex === index ? ' dragging' : ''}" 
 					     draggable="true" 
 					     ondragstart="dragStart(event, ${index})"></div>
 					<div class="name" data-sort="${nextDir}" ${tip?`description="${tip.replace(/"/g, `&quot;`)}"`:``} onclick="cycleSort('${key}', '${nextDir}')">${key}</div>

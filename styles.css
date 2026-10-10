@@ -311,3 +311,14 @@ body.column-dragging .name:hover:before{
 	content: "" !important;
 	opacity: 0 !important;
 }
+/* while dragging, only the dragged column's circle is red; hover effect is suppressed on the rest */
+body.column-dragging .drag-circle:not(.dragging){
+	background-image: radial-gradient(circle, #666 .5px, transparent .5px) !important;
+	border-color: #444 !important;
+	opacity: .6 !important;
+}
+body.column-dragging .drag-circle.dragging{
+	background-image: radial-gradient(circle, red .5px, transparent .5px) !important;
+	border-color: red !important;
+	opacity: 1 !important;
+}
